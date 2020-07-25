@@ -9,8 +9,8 @@ class BasicGene(object):
     def gene(self):
         """
         return: grid: numpy.matrix
-        return: pos: (x,y)
-        return: goal_pos: (x,y)
+        return: pos: (0,0)
+        return: goal_pos: (GRID_WIDTH-1, GRID_HEIGHT-1)
         """
         grid = np.random.randint(0, 2, (GRID_HEIGHT, GRID_WIDTH))
         grid[0, 0] = AGENT

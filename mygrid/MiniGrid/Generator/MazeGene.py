@@ -15,6 +15,12 @@ def OPPOSITE(direction):
 
 
 class MazeGene(object):
+    """
+    Describe: Generate maze like grid
+    return: grid
+    return: pos (0,0)
+    return: goal_pos (GRID_WIDTH-1, GRID_HEIGHT-1) 
+    """
     def gene(self):
         self._reset()
         self._carve_passage_from(0, 0)
@@ -31,7 +37,7 @@ class MazeGene(object):
                         nx, ny = 2 * cx + direction[0], 2 * cy + direction[1]
                         self.grid[ny, nx] = 0
         self.grid[self.pos] = AGENT
-        self.grid[self.goal_pos] = GOAL
+        self.grid[self.goal_pos[1], self.goal_pos[0]] = GOAL
 
         return self.grid.copy(), self.pos, self.goal_pos
 
@@ -51,8 +57,26 @@ class MazeGene(object):
         # 0000 -> Up, Down, Left, Right
         self.gene_grid = np.zeros((MAZE_HEIGHT, MAZE_WIDTH), dtype=np.uint8)
         self.pos = (0, 0)
-        self.goal_pos = (np.random.randint(GRID_HEIGHT),
-                        np.random.randint(GRID_WIDTH))
+        self.goal_pos = (GRID_WIDTH-1, GRID_HEIGHT-1)
+        # self.goal_pos = (np.random.randint(GRID_WEIGHT),
+        #                 np.random.randint(GRID_HEIGHT))
 
     def update(self, data):
         pass
+
+
+
+class SimpleMazeGene(MazeGene):
+    """
+    Describe: gene maze only with wall and empty cell (used for VAE)
+    """
+    def gene(self):
+        grid, _, _ 
+
+
+
+
+
+
+
+

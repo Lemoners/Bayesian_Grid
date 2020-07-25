@@ -12,8 +12,8 @@ class ValidGene(object):
         """
         Describe: generate solvable maze
         return: grid: numpy.matrix
-        return: pos: (x,y)
-        return: goal_pos: (x,y)
+        return: pos: (0,0)
+        return: goal_pos: (GRID_WIDTH-1,GRID_HEIGHT-1)
         """
         while True:
             grid = np.random.randint(0, 2, (GRID_HEIGHT, GRID_WIDTH))
