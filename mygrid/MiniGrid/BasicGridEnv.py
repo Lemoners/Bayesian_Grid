@@ -30,13 +30,16 @@ class BasicGridEnv(gym.Env):
         info = {}
 
         if (0 <= x < self.w and 0 <= y < self.h):
-            if (self.grid[y][x] == 3):
+            if (self.grid[y][x] == GOAL):
                 reward += 5
                 done = True
                 info = {"success": True}
-            elif (self.grid[y][x] == 0):
+                self.grid[self.pos[1],self.pos[0]] = 0
+                self.grid[y,x] = AGENT
+                self.pos = (x, y)
+            elif (self.grid[y,x] == 0):
                 self.grid[self.pos[1]][self.pos[0]] = 0
-                self.grid[y][x] = 2
+                self.grid[y][x] = AGENT
                 self.pos = (x, y)
 
                 cur_dis2goal = point_distance((x, y), self.goal_pos)
@@ -51,7 +54,7 @@ class BasicGridEnv(gym.Env):
         if (self.step_count > self.max_steps):
             done = True
 
-        return self.grid, reward, done, info
+        return self.grid.copy(), reward, done, info
 
     def reset(self):
         self.grid, self.pos, self.goal_pos = self.generator.gene()
@@ -61,4 +64,4 @@ class BasicGridEnv(gym.Env):
         # need reset each time
         self.dis2goal = point_distance((0, 0), self.goal_pos)
         self.step_count = 0
-        return self.grid
+        return self.grid.copy()

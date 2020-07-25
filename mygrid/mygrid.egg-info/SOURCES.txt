@@ -1,4 +1,7 @@
 setup.py
+MiniGrid/BasicGridEnv.py
+MiniGrid/ValidGridEnv.py
+MiniGrid/__init__.py
 mygrid.egg-info/PKG-INFO
 mygrid.egg-info/SOURCES.txt
 mygrid.egg-info/dependency_links.txt

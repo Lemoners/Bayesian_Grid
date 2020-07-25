@@ -69,9 +69,13 @@ class MazeGene(object):
 class SimpleMazeGene(MazeGene):
     """
     Describe: gene maze only with wall and empty cell (used for VAE)
+    return: grid
     """
     def gene(self):
-        grid, _, _ 
+        grid, pos, goal_pos = super().gene()
+        grid[pos[1], pos[0]] = 0
+        grid[goal_pos[1], goal_pos[0]] = 0
+        return grid
 
 
 

@@ -1,5 +1,5 @@
 from ..Generator.HyperPara import *
-from .action import direction2action
+from .action import direction2action, find_obj
 import numpy as np
 
 
@@ -72,7 +72,7 @@ class BFSAgent(object):
         return neibs
 
     def _reset(self, maze):
-        self.parent = np.array([[(-1, -1) for i in range(6)]
-                                for i in range(6)])
-        self.pos = (0, 0)
+        self.parent = np.array([[(-1, -1) for i in range(maze.shape[1])]
+                                for i in range(maze.shape[0])])
+        self.pos = find_obj(maze, AGENT) 
         self.h, self.w = maze.shape
