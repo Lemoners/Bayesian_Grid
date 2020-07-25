@@ -4,8 +4,8 @@ import random
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from ..Generator import SimpleMazeGene
-from ..Generator.HyperPara import GRID_HEIGHT, GRID_WIDTH
+from ..Generator.MazeGene import SimpleMazeGene
+from ..Generator.HyperPara import GRID_HEIGHT, GRID_WIDTH, Z_DIM
 
 
 # Device configuration
@@ -19,7 +19,7 @@ if not os.path.exists(model_save):
 # Hyper-parameters
 GRID_SIZE = GRID_HEIGHT * GRID_WIDTH
 h_dim = 40
-z_dim = 4
+z_dim = Z_DIM
 data_size = 10000
 num_epochs = 50
 batch_size = 64
@@ -50,7 +50,7 @@ class VAE(nn.Module):
     
     def decode(self, z):
         h = F.relu(self.fc2(z))
-        return F.sigmoid(self.fc3(h))
+        return torch.sigmoid(self.fc3(h))
     
     def forward(self, x):
         mu, log_var = self.encode(x)

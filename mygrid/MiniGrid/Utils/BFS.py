@@ -16,6 +16,8 @@ class BFSAgent(object):
 
         self.search_maze = maze.copy()
         self.visited = maze.copy()
+        assert (len(np.where(self.visited == GOAL)[0]) > 0), "NO GOAL IN MAZE"
+        assert (len(np.where(self.visited == AGENT)[0]) > 0), "NO AGENT IN MAZE"
         self.visited[np.where(self.visited == GOAL)] = 0
         self.visited[np.where(self.visited == AGENT)] = 0
 

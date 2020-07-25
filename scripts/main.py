@@ -14,9 +14,5 @@ while True:
     action = eval(input())
     print(action)
     _, _, done, _ = env.step(action)
-    # time.sleep(2)
     if done:
         break
-
-# maze = MazeGene()
-# print(maze.gene()[0])

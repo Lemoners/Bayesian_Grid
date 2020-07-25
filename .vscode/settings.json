@@ -1,3 +1,8 @@
 {
-    "python.pythonPath": "/home/lemon/Environments/ugvr_env/bin/python"
+    "python.pythonPath": "/home/lemon/Environments/ugvr_env/bin/python",
+    "cSpell.words": [
+        "Reconst",
+        "lvar",
+        "mygrid"
+    ]
 }

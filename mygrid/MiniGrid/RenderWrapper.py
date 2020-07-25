@@ -9,7 +9,7 @@ class RenderWrapper(tk.Frame):
     """
     Describe: a wrapper for render
     """
-    def __init__(self, env, width=GRID_WIDTH, height=GRID_HEIGHT, size=30):
+    def __init__(self, env, width=GRID_WIDTH, height=GRID_HEIGHT, size=50):
         super(RenderWrapper, self).__init__()
         self.env = env
         self.pos = (0, 0)
