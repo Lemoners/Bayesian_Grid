@@ -25,8 +25,9 @@ class BFSAgent(object):
         history = []
 
         # start BFS
-        search.append((0, 0))
-        self.visited[0, 0] = 1
+        self.ax, self.ay = find_obj(self.search_maze, AGENT)
+        search.append((self.ax,self.ay))
+        self.visited[self.ay,self.ax] = 1
 
         while(len(search) > 0):
             x, y = search[0]
@@ -36,7 +37,7 @@ class BFSAgent(object):
                 self.search_maze[np.where(self.search_maze == AGENT)] = 0
                 hx, hy = x, y
                 while True:
-                    if (hx == 0 and hy == 0):
+                    if (hx == self.ax and hy == self.ay):
                         break
                     thisx, thisy = self.parent[hy, hx]
                     action = direction2action(hx-thisx, hy-thisy)

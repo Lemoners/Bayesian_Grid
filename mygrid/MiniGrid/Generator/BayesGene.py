@@ -1,11 +1,14 @@
-from sklearn.gaussian_process.kernels import Matern
-from sklearn.gaussian_process import GaussianProcessRegressor
-from .HyperPara import Z_DIM
 import numpy as np
 from ..AE import VAE
 import os
 import torch
-from .HyperPara import GRID_HEIGHT, GRID_WIDTH, AGENT, GOAL
+from .HyperPara import GRID_HEIGHT, GRID_WIDTH, AGENT, GOAL, Z_DIM
+
+from sklearn.gaussian_process.kernels import Matern
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF, WhiteKernel
+from sklearn import preprocessing
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -22,10 +25,16 @@ class BayesGene(object):
         self.position = 0
 
         # current parameter, numpy
-        self.z = np.random.randn(Z_DIM)
+        # self.z = np.random.randn(Z_DIM)
+        self.z = np.zeros(Z_DIM)
         #kernel
         # K = 1.0 * Matern(length_scale=1.0, length_scale_bounds=(1e-1, 50.0), nu=1.5)
         K = 1.0 * Matern(length_scale=1.0)
+
+        # K = 1.0 * RBF(length_scale=100.0, length_scale_bounds=(1e-2, 1e3)) \
+            # + WhiteKernel(noise_level=1, noise_level_bounds=(1e-10, 1e+1))
+        # K = C(1.0, (1e-3, 1e-1)) * RBF(10, (1e-2, 1e-1))
+
         self.gp = GaussianProcessRegressor(kernel=K)
 
         # model_dir
@@ -34,7 +43,7 @@ class BayesGene(object):
         self.vae.load_state_dict(torch.load(model_dir))
         self.vae = self.vae.to(device).eval()
 
-        self.capacity = 500
+        self.capacity = 200
     
     def gene(self):
         grid = self._decode(torch.from_numpy(self.z).float().unsqueeze(0).to(device))
@@ -78,7 +87,9 @@ class BayesGene(object):
         return samples
     
     def choose_next_sample(self):
-        self.gp = self.gp.fit(self.X, self.Y)
+        fit_y = preprocessing.scale(self.Y)
+        self.gp = self.gp.fit(self.X, fit_y)
+        # print("\n", list(zip(self.X, self.Y)))
         x_samples = self._create_sample_x()
 
         posterior_sample = self.gp.sample_y(x_samples, 1).T[0]

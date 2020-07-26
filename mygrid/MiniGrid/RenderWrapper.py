@@ -25,6 +25,7 @@ class RenderWrapper(tk.Frame):
         self.canvas.grid()
 
     def _draw_maze(self, maze, pos, goal_pos):
+        self.canvas.delete('all')
         for x in range(self.mwidth):
             for y in range(self.mheight):
                 x0 = x * self.msize
@@ -40,7 +41,6 @@ class RenderWrapper(tk.Frame):
                     id = self.canvas.create_rectangle(x0, y0, x0+self.msize, y0+self.msize, width=0, fill=color)
                 if color == "red":
                     self.agent = id
-        self.canvas.pack()
     
     def step(self, action):
         obs, reward, done, info = self.env.step(action)

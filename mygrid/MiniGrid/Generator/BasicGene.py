@@ -15,7 +15,7 @@ class BasicGene(object):
         grid = np.random.randint(0, 2, (GRID_HEIGHT, GRID_WIDTH))
         grid[0, 0] = AGENT
         grid[GRID_HEIGHT - 1, GRID_WIDTH - 1] = GOAL
-        return grid, (GRID_WIDTH-1, GRID_HEIGHT-1)
+        return grid, (0,0), (GRID_WIDTH-1, GRID_HEIGHT-1)
 
     def update(self, data):
         pass

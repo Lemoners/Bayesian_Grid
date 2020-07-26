@@ -3,7 +3,7 @@ import random
 Transition = namedtuple("Transition", ("state", "action"))
 
 class ReplayBuffer(object):
-    def __init__(self, capacity=10000, memtype=Transition):
+    def __init__(self, capacity=50000, memtype=Transition):
         self.capacity = capacity
         self.memtype = memtype
         self.memory = []
@@ -18,6 +18,11 @@ class ReplayBuffer(object):
 
     def sample(self, batch_size):
         return random.sample(self.memory, batch_size)
+
+    def clear(self):
+        del self.memory
+        self.memory = []
+        self.position = 0
 
     def __len__(self):
         return len(self.memory)

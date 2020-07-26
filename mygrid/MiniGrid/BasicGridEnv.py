@@ -13,7 +13,14 @@ class BasicGridEnv(gym.Env):
         super(BasicGridEnv, self).__init__()
         self.generator = generator
 
-        self.reset()
+        # Reset
+        self.grid, self.pos, self.goal_pos = self.generator.gene()
+        self.h, self.w = self.grid.shape
+        self.max_steps = self.h * self.w
+
+        # need reset each time
+        self.dis2goal = point_distance((0, 0), self.goal_pos)
+        self.step_count = 0
 
         # action space && observation space
         self.action_space = spaces.Discrete(ACTION_SPACE_DIM)

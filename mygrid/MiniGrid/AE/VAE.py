@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from ..Generator.MazeGene import SimpleMazeGene
 from ..Generator.HyperPara import GRID_HEIGHT, GRID_WIDTH, Z_DIM
-
+from ..Utils import conv2d_size_out
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -18,11 +18,12 @@ if not os.path.exists(model_save):
 
 # Hyper-parameters
 GRID_SIZE = GRID_HEIGHT * GRID_WIDTH
-h_dim = 40
+h_dim = 25
 z_dim = Z_DIM
 data_size = 10000
-num_epochs = 50
-batch_size = 64
+num_epochs = 1000
+update_iter = 1
+batch_size = 128
 learning_rate = 1e-3
 
 # data gene
@@ -33,6 +34,14 @@ gene = SimpleMazeGene()
 class VAE(nn.Module):
     def __init__(self):
         super(VAE, self).__init__()
+        # self.layer1 = nn.Sequential(
+        #     nn.Conv2d(1, 16, kernel_size=2, stride=1, padding=2),
+        #     nn.BatchNorm2d(16),
+        #     nn.ReLU(),
+        #     nn.AvgPool2d(kernel_size=2, stride=2)
+        # )
+        # w = conv2d_size_out(GRID_WIDTH, 2, 1, 2) // 2
+        # h = conv2d_size_out(GRID_HEIGHT, 2, 1, 2) // 2
         self.fc1 = nn.Linear(GRID_SIZE, h_dim)
         self.fmu = nn.Linear(h_dim, z_dim)
         self.flog_var = nn.Linear(h_dim, z_dim)
@@ -69,28 +78,32 @@ def train_vae():
             data.append(gene.gene())
         print('\n Data generated')
         return data
-    data = gene_data()
-    data_loader = torch.utils.data.DataLoader(dataset=data, batch_size=batch_size, shuffle=True)
 
-    # Start training
-    for epoch in range(num_epochs):
-        for i, x in enumerate(data_loader):
-            # Forward pass
-            x = x.to(device).view(-1, GRID_SIZE).float()
-            x_reconstruct, mu, log_var = model(x)
+    for it in range(update_iter):
+        data = gene_data()
+        data_loader = torch.utils.data.DataLoader(dataset=data, batch_size=batch_size, shuffle=True)
 
-            reconstruct_loss = F.binary_cross_entropy(x_reconstruct, x, size_average=False)
-            kl_div = -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp())
+        # Start training
+        for epoch in range(num_epochs):
+            for i, x in enumerate(data_loader):
+                # Forward pass
+                x = x.to(device).view(-1, GRID_SIZE).float()
+                x_reconstruct, mu, log_var = model(x)
 
-            # back prop and optim
-            loss = reconstruct_loss + kl_div
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+                # reconstruct_loss = F.binary_cross_entropy(x_reconstruct, x, size_average=False)
+                reconstruct_loss = F.binary_cross_entropy(x_reconstruct, x, reduction='sum')
+                kl_div = -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp())
 
-            if (i+1) % 50 == 0:
-                print ("\r Epoch[{}/{}], Step [{}/{}], Reconst Loss: {:.4f}, KL Div: {:.4f}".format(epoch+1, num_epochs, i+1, len(data_loader), reconstruct_loss.item(), kl_div.item()), end=" ", flush=True)
-            
+                # back prop and optim
+                loss = reconstruct_loss + kl_div
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                if (i+1) % 50 == 0:
+                    print ("\r Iter [{}/{}], Epoch [{}/{}], Step [{}/{}], Reconst Loss: {:.4f}, KL Div: {:.4f}".format(it+1, update_iter, epoch+1, num_epochs, i+1, len(data_loader), reconstruct_loss.item(), kl_div.item()), end=" ", flush=True)
+                    torch.save(model.state_dict(), model_save + "/VAE.pkl")
+        print("")
     # save model
     torch.save(model.state_dict(), model_save + "/VAE.pkl")
 

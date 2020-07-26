@@ -6,8 +6,8 @@ import mygrid
 import gym
 from mygrid.MiniGrid.AE.VAE import train_vae, sample_vae
 
-# train_vae()
-print(sample_vae(1))
+train_vae()
+# print(sample_vae(1))
 
 
 
