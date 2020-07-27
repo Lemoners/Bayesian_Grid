@@ -22,7 +22,8 @@ class BayesGridEnv(BasicGridEnv):
             result = 0
             if info.get("success"):
                 result = 1
-            self._update_model(result)
+            if np.random.randint(0, 2) < 1:
+                self._update_model(result)
         return obs, reward, done, info
     
     def _update_model(self, result):

@@ -11,7 +11,7 @@ if not os.path.exists(os.path.dirname(msavefig)):
 
 if __name__ == "__main__":
     time = datetime.datetime.now()
-    time = datetime.datetime.strftime(time,'%H_%M_%S')
+    time = datetime.datetime.strftime(time,'%m_%d_%H_%M_%S')
     msavefig += time + ".jpg"
     # print(msavefig)
     visualize(5000, msavefig)

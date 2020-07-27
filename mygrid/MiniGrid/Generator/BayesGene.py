@@ -25,8 +25,9 @@ class BayesGene(object):
         self.position = 0
 
         # current parameter, numpy
-        # self.z = np.random.randn(Z_DIM)
-        self.z = np.zeros(Z_DIM)
+        self.z = np.random.randn(Z_DIM)
+        self.history_z = []
+        # self.z = np.zeros(Z_DIM)
         #kernel
         # K = 1.0 * Matern(length_scale=1.0, length_scale_bounds=(1e-1, 50.0), nu=1.5)
         K = 1.0 * Matern(length_scale=1.0)
@@ -65,8 +66,9 @@ class BayesGene(object):
 
     def update_z(self):
         if (len(self.X) > self.minimum_update_data):
+            self.history_z.append(list(self.z.copy()))
             self.z = self.choose_next_sample()
-    
+
     def _encode(self, x):
         mu, lvar = self.vae.encode(x)
         return self.vae.reparameterize(mu, lvar)
@@ -90,10 +92,7 @@ class BayesGene(object):
         return samples
     
     def choose_next_sample(self):
-        # fit_y = normalize([self.Y], axis=1)[0]
-        fit_y = self.Y
-        # print("")
-        # print(fit_y)
+        fit_y = normalize([self.Y], axis=1)[0]
         self.gp = self.gp.fit(self.X, fit_y)
         # print("\n", list(zip(self.X, self.Y)))
         x_samples = self._create_sample_x()

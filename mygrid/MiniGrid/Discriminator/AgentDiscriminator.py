@@ -3,9 +3,15 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+import math
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 batch_size = 128
+
+def sigmoid(x):
+    # TODO: Implement sigmoid function
+    return 1/(1 + np.exp(-x))
+
 
 class AgentDiscriminator(object):
     def __init__(self):
@@ -39,7 +45,8 @@ class AgentDiscriminator(object):
             predictions = (predictions == 0).sum(dim=0)
             precision += predictions.item()
         model.train()
-        return (precision / len(history))
+        precision = precision / len(history)
+        return (sigmoid(40 * max(precision - 0.9, 0) - 2))
         # return ((precision / len(history)) > threshold)
 
 

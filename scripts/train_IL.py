@@ -14,6 +14,7 @@ import argparse
 import torch
 import torch.nn as nn
 import numpy as np
+import json
 # import warnings
 # warnings.filterwarnings("ignore")
 
@@ -23,6 +24,10 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model_save = os.path.dirname(os.path.abspath(__file__)) + "/model/IL/Basic"
 if not os.path.exists(model_save):
     os.makedirs(model_save)
+
+para_save = os.path.dirname(os.path.abspath(__file__)) + "/para"
+if not os.path.exists(para_save):
+    os.makedirs(para_save)
 
 
 parser = argparse.ArgumentParser(description="Training IL Agent")
@@ -121,9 +126,10 @@ def bayes_train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3
 
     for epoch in range(num_epochs):
         # evaluation
-        # mazes = hard_maze_gene.batch_gene(batches=evaluate_epoch)
-        # score = agent_dis.evaluate_agent(model, mazes)
-        # env._update_model(score)
+        mazes = hard_maze_gene.batch_gene(batches=evaluate_epoch)
+        score = agent_dis.evaluate_agent(model, mazes)
+        env._update_model(score)
+        
         for _ in range(evaluate_epoch):
             obs = env.reset()
             while True:
@@ -160,9 +166,12 @@ def bayes_train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3
         if (epoch+1) % log_interval == 0:
             print ("")
 
-
         if (epoch+1) % save_interval == 0:
             model_state_dicts[str(epoch+1)] = model.state_dict().copy()
+    
+    with open(para_save + "/history.json", "w+") as f:
+        json.dump(env.generator.history_z, f)
+
     torch.save(model_state_dicts, model_save + "/" + env_str)
 
 

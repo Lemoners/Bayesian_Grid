@@ -60,7 +60,7 @@ if __name__ == "__main__":
         os.makedirs(pic_dir)
 
     mtime = datetime.datetime.now()
-    mtime = datetime.datetime.strftime(mtime, "%H_%M_%S")
+    mtime = datetime.datetime.strftime(mtime, "%m_%d_%H_%M_%S")
 
     if args.visual:
         env = RenderWrapper(eval(args.envs[0])())

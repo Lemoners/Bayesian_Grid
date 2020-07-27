@@ -32,7 +32,7 @@ env = gym.make('mazegrid-v0')
 #             break
 model = ILNet()
 checkpoint = torch.load(os.path.dirname(os.path.abspath(__file__)) + "/model/IL/Basic/BayesGridEnv")
-model.load_state_dict(checkpoint['5000'])
+model.load_state_dict(checkpoint['500'])
 
 # for i in range(1):
 #     # grid = env.reset()
