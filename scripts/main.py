@@ -31,7 +31,7 @@ env = gym.make('mazegrid-v0')
 #         if done:
 #             break
 model = ILNet()
-checkpoint = torch.load(os.path.dirname(os.path.abspath(__file__)) + "/model/IL/Basic/MazeGridEnv")
+checkpoint = torch.load(os.path.dirname(os.path.abspath(__file__)) + "/model/IL/Basic/BayesGridEnv")
 model.load_state_dict(checkpoint['5000'])
 
 # for i in range(1):
@@ -50,7 +50,7 @@ model.load_state_dict(checkpoint['5000'])
 #     print(discriminator.evaluate_maze(grid))
 
 gene = HardMazeGene()
-grids = gene.batch_gene(batches=10)
+grids = gene.batch_gene(batches=50)
 
 discriminator = AgentDiscriminator()
 print(discriminator.evaluate_agent(model, grids))

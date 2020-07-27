@@ -37,6 +37,8 @@ class BayesGene(object):
 
         self.gp = GaussianProcessRegressor(kernel=K)
 
+        self.minimum_update_data = 5
+
         # model_dir
         model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..") + '/AE/model/VAE.pkl'
         self.vae = VAE()
@@ -62,7 +64,8 @@ class BayesGene(object):
         self.z = z
 
     def update_z(self):
-        self.z = self.choose_next_sample()
+        if (len(self.X) > self.minimum_update_data):
+            self.z = self.choose_next_sample()
     
     def _encode(self, x):
         mu, lvar = self.vae.encode(x)
@@ -87,7 +90,10 @@ class BayesGene(object):
         return samples
     
     def choose_next_sample(self):
-        fit_y = normalize([self.Y], axis=0)[0]
+        fit_y = normalize([self.Y], axis=1)[0]
+        # fit_y = self.Y
+        # print("")
+        # print(fit_y)
         self.gp = self.gp.fit(self.X, fit_y)
         # print("\n", list(zip(self.X, self.Y)))
         x_samples = self._create_sample_x()

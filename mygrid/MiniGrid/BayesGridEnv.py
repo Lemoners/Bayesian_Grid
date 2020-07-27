@@ -18,11 +18,11 @@ class BayesGridEnv(BasicGridEnv):
     
     def step(self, action):
         obs, reward, done, info = super().step(action)
-        if done:
-            result = 0
-            if info.get("success"):
-                result = 1
-            self._update_model(result)
+        # if done:
+        #     result = 0
+        #     if info.get("success"):
+        #         result = 1
+        #     self._update_model(result)
         return obs, reward, done, info
     
     def _update_model(self, result):

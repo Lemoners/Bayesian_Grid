@@ -3,6 +3,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from mygrid.MiniGrid.BayesGridEnv import BayesGridEnv
 from mygrid.MiniGrid import BasicGridEnv, ValidGridEnv, MazeGridEnv, RenderWrapper
+from mygrid.MiniGrid.HardGridEnv import HardGridEnv
 from mygrid.MiniGrid.Agent import ILNet
 from mygrid.MiniGrid.Utils import smooth
 import argparse
@@ -17,7 +18,7 @@ import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--models', nargs='+', default=['BayesGridEnv', 'BasicGridEnv', 'ValidGridEnv', 'MazeGridEnv'])
-parser.add_argument('-e', '--envs', nargs='+', default=['ValidGridEnv', 'MazeGridEnv'])
+parser.add_argument('-e', '--envs', nargs='+', default=['HardGridEnv', 'ValidGridEnv', 'MazeGridEnv'])
 parser.add_argument('-v', '--visual', action="store_true", default=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -85,7 +86,7 @@ if __name__ == "__main__":
                 env = eval(_env)()
                 model_checkpoint = torch.load(model_checkpoint_path + "/" + _model)
                 for i, k in enumerate(list(model_checkpoint.keys())[::2]):
-                    print("\rEvaluating {} on {} {:.2f}%".format(_model, _env, 100*(i/len(model_checkpoint.keys()))), end="", flush=True)
+                    print("\rEvaluating {} on {} {:.2f}%".format(_model, _env, 100*(i/len(list(model_checkpoint.keys())[::2]))), end="", flush=True)
                     model = ILNet()
                     model.load_state_dict(model_checkpoint[k])
                     data = evaluate(env, model, _model, eval(k))

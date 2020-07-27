@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import numpy as np
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-batch_size = 64
+batch_size = 128
 
 class AgentDiscriminator(object):
     def __init__(self):
@@ -25,14 +25,12 @@ class AgentDiscriminator(object):
         for grid in grids:
             h, s = self.bfs.solve(grid)
             if s:
-                history.extend(h)
-        
+                history.extend(h)        
         data_loader = torch.utils.data.DataLoader(dataset=history, batch_size=batch_size, shuffle=False)
         
         precision = 0
 
         for i, (states, actions) in enumerate(data_loader):
-            
             states = states.to(device).unsqueeze(1).float()
             actions = actions.to(device)
             predictions = model(states)
@@ -40,7 +38,7 @@ class AgentDiscriminator(object):
             predictions = (predictions - actions).view(actions.size(0))
             predictions = (predictions == 0).sum(dim=0)
             precision += predictions.item()
-
+        model.train()
         return (precision / len(history))
         # return ((precision / len(history)) > threshold)
 

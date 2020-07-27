@@ -7,12 +7,19 @@ from mygrid.MiniGrid.BayesGridEnv import BayesGridEnv
 from mygrid.MiniGrid.Agent import ILNet
 from mygrid.MiniGrid.Memory import ReplayBuffer
 from mygrid.MiniGrid import BasicGridEnv, ValidGridEnv, MazeGridEnv
+from mygrid.MiniGrid.HardGridEnv import HardGridEnv
+from mygrid.MiniGrid.Generator.HardMazeGene import HardMazeGene
+from mygrid.MiniGrid.Discriminator.AgentDiscriminator import AgentDiscriminator
 import argparse
 import torch
 import torch.nn as nn
 import numpy as np
+# import warnings
+# warnings.filterwarnings("ignore")
+
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 model_save = os.path.dirname(os.path.abspath(__file__)) + "/model/IL/Basic"
 if not os.path.exists(model_save):
     os.makedirs(model_save)
@@ -101,6 +108,9 @@ def bayes_train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3
     solvable_maze = 0
     bad_maze = 0
 
+    agent_dis = AgentDiscriminator()
+    hard_maze_gene = HardMazeGene()
+
     # pre_collect
     while (len(memory) < pre_collect):
         obs = env.reset()
@@ -111,14 +121,9 @@ def bayes_train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3
 
     for epoch in range(num_epochs):
         # evaluation
-        model.eval()
-        for _ in range(evaluate_epoch):
-            obs = env.reset()
-            while True:
-                obs, reward, done, info = env.step(model.predict(obs))
-                if done:
-                    break
-        model.train()
+        mazes = hard_maze_gene.batch_gene(batches=evaluate_epoch)
+        score = agent_dis.evaluate_agent(model, mazes)
+        env._update_model(score)
         
         # get expert demo
         for _ in range(demo_epoch):
