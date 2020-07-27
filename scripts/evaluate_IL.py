@@ -77,8 +77,6 @@ if __name__ == "__main__":
             time.sleep(0.2)
             if done:
                 break
-
-
     else:
         for _env in args.envs:
             history = []

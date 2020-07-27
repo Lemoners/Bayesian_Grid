@@ -121,9 +121,16 @@ def bayes_train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3
 
     for epoch in range(num_epochs):
         # evaluation
-        mazes = hard_maze_gene.batch_gene(batches=evaluate_epoch)
-        score = agent_dis.evaluate_agent(model, mazes)
-        env._update_model(score)
+        # mazes = hard_maze_gene.batch_gene(batches=evaluate_epoch)
+        # score = agent_dis.evaluate_agent(model, mazes)
+        # env._update_model(score)
+        for _ in range(evaluate_epoch):
+            obs = env.reset()
+            while True:
+                action = model.predict(obs)
+                obs, reward, done, info = env.step(action)
+                if done:
+                    break
         
         # get expert demo
         for _ in range(demo_epoch):
