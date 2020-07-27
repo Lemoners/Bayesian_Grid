@@ -9,7 +9,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 from sklearn import preprocessing
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
-
+from sklearn.preprocessing import normalize
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class BayesGene(object):
@@ -87,7 +87,7 @@ class BayesGene(object):
         return samples
     
     def choose_next_sample(self):
-        fit_y = preprocessing.scale(self.Y)
+        fit_y = normalize([self.Y], axis=0)[0]
         self.gp = self.gp.fit(self.X, fit_y)
         # print("\n", list(zip(self.X, self.Y)))
         x_samples = self._create_sample_x()

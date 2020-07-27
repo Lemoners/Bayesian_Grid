@@ -32,6 +32,7 @@ class BayesGridEnv(BasicGridEnv):
             self.generator.update(np.mean(self.data))
             self.generator.update_z()
             self.data = [result]
+
     # def _update_model(self, result):
     #     self.generator.update(result)
     #     self.generator.update_z()
@@ -65,7 +66,5 @@ class BayesGridEnv(BasicGridEnv):
         h, s = self.bfs.solve(grid)
         if not s:
             self._update_model(-1)
-        else:
-            self._update_model(1)
         return grid
 

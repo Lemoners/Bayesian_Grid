@@ -33,7 +33,7 @@ def visualize(samples=5, msavefig=""):
         maze[np.where(maze==3)] = 0
         maze_history.append(maze.reshape(-1))
     
-    # pca = PCA(n_components=2)
+    pca = PCA(n_components=2)
     # vae_history = pca.fit_transform(vae_history)
     # maze_history = pca.fit_transform(maze_history)
 
@@ -42,8 +42,8 @@ def visualize(samples=5, msavefig=""):
     maze_history = tsne.fit_transform(maze_history)
 
 
-    # vae_history = normalize(pca.fit_transform(vae_history), norm="l2")
-    # maze_history = normalize(pca.fit_transform(maze_history), norm="l2")
+    vae_history = normalize(vae_history, norm="l2" , axis=0)
+    maze_history = normalize(maze_history, norm="l2", axis=0)
 
     vae_history = zip(*list(vae_history))
     maze_history = zip(*list(maze_history))

@@ -22,7 +22,7 @@ parser.add_argument('-v', '--visual', action="store_true", default=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def evaluate(env, model, model_str, model_episode, episodes=20, sm=5):
+def evaluate(env, model, model_str, model_episode, episodes=10, sm=5):
     model = model.to(device)
     model.eval()
 
@@ -38,11 +38,16 @@ def evaluate(env, model, model_str, model_episode, episodes=20, sm=5):
                 else:
                     history.append(0)
                 break
-    history = smooth(history, sm=sm)
+
+    history = sorted(smooth(history, sm=sm))
 
     data = []
-    for r in history:
-        data.append([model_episode, model_str, r])
+    data.append([model_episode, model_str, np.quantile(history, 0.25)])
+    data.append([model_episode, model_str, np.mean(history)])
+    data.append([model_episode, model_str, np.quantile(history, 0.75)])
+
+    # for r in history:
+    #     data.append([model_episode, model_str, r])
     return data
 
 if __name__ == "__main__":
@@ -79,7 +84,7 @@ if __name__ == "__main__":
             for _model in args.models:
                 env = eval(_env)()
                 model_checkpoint = torch.load(model_checkpoint_path + "/" + _model)
-                for i, k in enumerate(model_checkpoint.keys()):
+                for i, k in enumerate(list(model_checkpoint.keys())[::2]):
                     print("\rEvaluating {} on {} {:.2f}%".format(_model, _env, 100*(i/len(model_checkpoint.keys()))), end="", flush=True)
                     model = ILNet()
                     model.load_state_dict(model_checkpoint[k])
@@ -87,6 +92,13 @@ if __name__ == "__main__":
                     history.extend(data)
                 print("")
             history = pd.DataFrame(history, columns=['episode', "model", "reward"])
+
+            for _model in args.models:
+                rs = history.loc[history["model"]==_model, "reward"]
+                rs = smooth(rs, sm=10)
+                history.loc[history["model"]==_model, "reward"] = rs
+
+
             sns.lineplot(x="episode", y="reward", hue="model", data=history)
             plt.title("IL Agent Test in {} Env".format(_env), fontsize=20)
             plt.savefig(pic_dir + "/" + _env + mtime + ".jpg", dpi=300)

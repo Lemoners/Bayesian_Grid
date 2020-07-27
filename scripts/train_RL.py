@@ -7,7 +7,7 @@ from stable_baselines3.common.cmd_util import make_vec_env
 from stable_baselines3.common.utils import set_random_seed
 from mygrid.MiniGrid import MazeGridEnv, SparseRewardWrapper
 
-SPARSE = True
+SPARSE = False
 
 model_save = os.path.dirname(os.path.abspath(__file__)) + "/model/RL/PPO"
 

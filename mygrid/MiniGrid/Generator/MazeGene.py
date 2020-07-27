@@ -23,7 +23,9 @@ class MazeGene(object):
     """
     def gene(self):
         self._reset()
-        self._carve_passage_from(0, 0)
+        sx = random.randint(0, MAZE_WIDTH - 1)
+        sy = random.randint(0, MAZE_HEIGHT - 1)
+        self._carve_passage_from(sx, sy)
         # print(self.gene_grid)
         self.grid = np.ones((GRID_HEIGHT, GRID_WIDTH), dtype=np.uint8)
         for cx in range(MAZE_WIDTH):
