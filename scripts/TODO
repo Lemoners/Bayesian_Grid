@@ -1,0 +1,5 @@
+Add a baseline
+Try use loss progress (or other progress indicators)
+Try performance in some fix number of envs.
+VAE haven't seen tasks with different levels of difficulty.
+No clear improvement during training epoch. (Fix number)
