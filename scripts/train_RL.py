@@ -12,7 +12,7 @@ from mygrid.MiniGrid.Generator.HyperPara import GRID_HEIGHT, GRID_WIDTH
 
 import argparse
 
-save_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model','RL','DQN')
+save_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'model','RL','DQN')
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 

@@ -44,7 +44,8 @@ class VAE(nn.Module):
         std = torch.exp(log_var/2)
         eps = torch.randn_like(std)
         return mu + eps * std
-        def decode(self, z):
+    
+    def decode(self, z):
         h = F.relu(self.fc2(z))
         return torch.sigmoid(self.fc3(h))
     
@@ -101,7 +102,7 @@ def train_vae(data_size=10000, num_epochs=1000, update_iter=1, batch_size=128, l
     # Save model
     torch.save(model.state_dict(), model_save + "/VAE.pkl")
 
-def sample_vae(sample_size=batch_size):
+def sample_vae(sample_size=128):
     """ Random sampling from trained VAE.
     """
     model = VAE()

@@ -25,11 +25,11 @@ random_sample_rate = 10 # random_sample_rate / 10
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model_save = os.path.dirname(os.path.abspath(__file__)) + "/model/IL/Basic"
+model_save = os.path.dirname(os.path.abspath(__file__)) + "/data/model/IL"
 if not os.path.exists(model_save):
     os.makedirs(model_save)
 
-para_save = os.path.dirname(os.path.abspath(__file__)) + "/para"
+para_save = os.path.dirname(os.path.abspath(__file__)) + "/data/bayes_para"
 if not os.path.exists(para_save):
     os.makedirs(para_save)
 

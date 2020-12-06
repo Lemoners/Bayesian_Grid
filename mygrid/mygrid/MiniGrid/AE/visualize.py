@@ -1,8 +1,9 @@
 from .VAE import VAE
 from ..Generator import MazeGene
 from ..Generator.HyperPara import Z_DIM, GRID_HEIGHT, GRID_WIDTH
-from ..Utils.BFS import BFSAgentimport os
+from ..Utils.BFS import BFSAgent
 
+import os
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import normalize
@@ -50,7 +51,7 @@ def visualize(samples=5, dim_reduction="pca", msavefig=""):
         vae_history = tsne.fit_transform(vae_history)
         maze_history = tsne.fit_transform(maze_history)
     else:
-        raise Exception("Unknown dim_reduction: {}, which should be in \{pca, tsne\}".format(dim_reduction))
+        raise Exception("Unknown dim_reduction: {}, which should be in (pca, tsne)".format(dim_reduction))
 
 
     vae_history = normalize(vae_history, norm="l2" , axis=0)
