@@ -9,10 +9,12 @@ WALL = 1
 AGENT = 2
 GOAL = 3
 
-# BAYES_X = 10
+ACTION_SPACE_DIM = 5
 
 # For vae
+H_DIM = 25
 Z_DIM = 8
+
 
 # For BayesGene
 DATA_BEFORE_UPDATE = 10
