@@ -17,6 +17,7 @@ from sklearn.preprocessing import normalize
 from sklearn.neighbors import KDTree
 
 np.random.seed(0)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class BayesGene(object):
     """ BayesGene
@@ -77,9 +78,9 @@ class BayesGene(object):
         print(" Update GP", len(self.memory))
         if (len(self.memory) > self.minimum_update_data):
             self.choose_next_gp()
-            self.z = self.sample()
+            self.z = self.sample(self.posterior_sample_number)
     
-    def sample(self, num=self.posterior_sample_number):
+    def sample(self, num=500):
         """ Generate a sample from current Gaussian Process through Thompson Sampling.  
         """
         x_samples = np.random.randn(num, Z_DIM)

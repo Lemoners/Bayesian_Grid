@@ -1,11 +1,10 @@
-import sys
-import os
-
-import mygrid
-import gym
+"""
+Train VAE.
+"""
 from mygrid.MiniGrid.AE.VAE import train_vae, sample_vae
 
-train_vae()
+if __name__ == "__main__":  
+    train_vae()
 
 
 

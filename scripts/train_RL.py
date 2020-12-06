@@ -1,90 +1,54 @@
-"""Train RL agents using DQN with tianshou (https://github.com/thu-ml/tianshou)"""
+"""
+Train RL agents using PPO with stable_baseline3 (https://github.com/DLR-RM/stable-baselines3)
+"""
 
+from stable_baselines3 import A2C, PPO
+from stable_baselines3.common.vec_env import SubprocVecEnv
+from stable_baselines3.common.cmd_util import make_vec_env
+from stable_baselines3.common.utils import set_random_seed
+import argparse
 import os
-import sys
-import tianshou as ts
-import torch, numpy as np
-from torch import nn
-
 from mygrid.MiniGrid import MazeGridEnv, SparseRewardWrapper, RenderWrapper
 from mygrid.MiniGrid.Utils import conv2d_size_out
 from mygrid.MiniGrid.Generator.HyperPara import GRID_HEIGHT, GRID_WIDTH
 
-import argparse
-
-save_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'model','RL','DQN')
-if not os.path.exists(save_dir):
-    os.makedirs(save_dir)
-
-
-env = MazeGridEnv()
-train_envs = ts.env.DummyVectorEnv([lambda: MazeGridEnv() for _ in range(8)])
-test_envs = ts.env.DummyVectorEnv([lambda: SparseRewardWrapper(MazeGridEnv()) for _ in range(100)])
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 parser = argparse.ArgumentParser()
-parser.add_argument('--lr', type=float, default=1e-3)
-parser.add_argument('--discount-factor', type=float, default=0.9)
-parser.add_argument('--buffer-size', type=int, default=20000)
-parser.add_argument('--max-epoch', type=int, default=100)
-parser.add_argument('--batch_size', type=int, default=64)
+parser.add_argument('-s', '--sparse', default=False, action='store_true')
 
-class Net(nn.Module):
-    def __init__(self, state_shape, action_shape):
-        super().__init__()
-        w = conv2d_size_out(conv2d_size_out(GRID_WIDTH))
-        h = conv2d_size_out(conv2d_size_out(GRID_HEIGHT))
-        self.model = nn.Sequential(*[
-            nn.Conv2d(1, 8, kernel_size=2, stride=1, padding=2),
-            nn.BatchNorm2d(8),
-            nn.ReLU(),
-            nn.Conv2d(8, 16, kernel_size=2, stride=1, padding=2),
-            nn.BatchNorm2d(16),
-            nn.ReLU()
-        ])
-        self.fc = nn.Linear(h*w*16, np.prod(action_shape))
-    def forward(self, obs, state=None, info={}):
-        if not isinstance(obs, torch.Tensor):
-            obs = torch.tensor(obs, dtype=torch.float).to(device)
-        batch = obs.shape[0]
-        logits = self.model(obs.view(batch, 1, GRID_HEIGHT, GRID_WIDTH))
-        logits = self.fc(logits.view(batch, -1))
-        return logits, state
+model_save = os.path.dirname(os.path.abspath(__file__)) + "/data/model/RL/A2C"
+if not os.path.exists(model_save):
+    os.makedirs(model_save)
 
-def train_RL(lr=1e-3, discount_factor=0.9, buffer_size=20000, max_epoch=100, batch_size=64):
-    """ Train RL agent using DQN with tianshou (https://github.com/thu-ml/tianshou)
-
-    :args lr: learning rate.
-    :args discount_factor: discount_factor w.r.t. cumulated reward.
-    :args buffer_size: replay buffer size for DQN.
-    :args max_epoch: max training epoch.
-    :args batch_size: batch size.
-
+def make_env(rank, sparse=False, seed=0):
     """
-    state_shape = env.observation_space.shape or env.observation_space.n
-    action_shape = env.action_space.shape or env.action_space.n
-    net = Net(state_shape, action_shape).to(device)
-    optim = torch.optim.Adam(net.parameters(), lr=lr)
+    Utility function for multiprocessed env.
+    """
+    def _init():
+        env = MazeGridEnv()
+        if sparse:
+            env = SparseRewardWrapper(env)
+        env.seed(seed + rank)
+        return env
+    set_random_seed(seed)
+    return _init
 
-    policy = ts.policy.DQNPolicy(net, optim,
-        discount_factor=discount_factor, estimation_step=3,target_update_freq=320)
-
-    train_collector = ts.data.Collector(policy, train_envs, ts.data.ReplayBuffer(size=buffer_size))
-    test_collector = ts.data.Collector(policy, test_envs)
-
-    result = ts.trainer.offpolicy_trainer(
-        policy, train_collector, test_collector,
-        max_epoch=max_epoch, step_per_epoch=1000, collect_per_step=10,
-        episode_per_test=100, batch_size=batch_size,
-        train_fn=lambda epoch, env_step: policy.set_eps(0.1),
-        test_fn=lambda epoch, env_step: policy.set_eps(0.05),
-        stop_fn=lambda x: x >= 0.8,
-        writer=None)
-
-    print(f'Finished training! With {result["duration"]}')
-    torch.save(policy.state_dict(), save_dir + '/dqn.pth')
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = parser.parse_args()
-    train_RL(lr=args.lr, discount_factor=args.discount_factor, buffer_size=args.buffer_size, max_epoch=args.max_epoch, batch_size=args.batch_size)
+
+    num_cpu = 4  # Number of processes to use
+    # Create the vectorized environment
+    env = SubprocVecEnv([make_env(i, sparse=args.sparse) for i in range(num_cpu)])
+
+    time_steps = 200000
+    model = A2C('MlpPolicy', env, verbose=1)
+    model.learn(total_timesteps=time_steps)
+
+    if not args.sparse:
+        model_save += "/MazeGridEnv"
+    else:
+        model_save += "/SparseMazeGridEnv"
+
+    if not os.path.exists(model_save):
+        os.makedirs(model_save)
+
+    model.save(model_save + "/model_{}".format(time_steps))

@@ -85,7 +85,7 @@ class AlphaSet(object):
                 self.old_values[self.old_keys.index(self.keys[i])] = self.func(__old_values, self.values[i])
             else:
                 if len(self.old_keys) < self.capacity:
-                    self.old_keys.append(None)i
+                    self.old_keys.append(None)
                     self.old_values.append(None)
                 self.old_keys[self.old_position] = self.keys[i]
                 self.old_values[self.old_position] = self.values[i]
