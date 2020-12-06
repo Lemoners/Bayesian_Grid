@@ -18,11 +18,10 @@ class AgentDiscriminator(object):
         super().__init__()
         self.bfs = BFSAgent()
 
-    def evaluate_agent(self, model, grids, threshold=0.5):
-        """
-        When setting a threshold, the agent will only be told that: (Just like human)
-            1. You're doing Good.
-            2. You're doing Bad.
+    def evaluate_agent(self, model, grids):
+        """ Evaluate the performance of the agent on given grids.
+        
+        We evaluate the performance of the agent through comparison between the agent's actions and the correct actions.
         """
         model.eval()
         model = model.to(device)
@@ -47,13 +46,3 @@ class AgentDiscriminator(object):
         model.train()
         precision = precision / len(history)
         return (sigmoid(40 * max(precision - 0.9, 0) - 2))
-
-
-
-
-
-
-
-
-
-
