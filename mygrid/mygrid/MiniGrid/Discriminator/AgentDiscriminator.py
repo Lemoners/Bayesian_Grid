@@ -47,7 +47,6 @@ class AgentDiscriminator(object):
         model.train()
         precision = precision / len(history)
         return (sigmoid(40 * max(precision - 0.9, 0) - 2))
-        # return ((precision / len(history)) > threshold)
 
 
 

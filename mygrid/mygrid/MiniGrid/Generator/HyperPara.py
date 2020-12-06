@@ -1,15 +1,18 @@
+""" Hyper-parameters for this module.
+"""
+
 GRID_HEIGHT = 7
 GRID_WIDTH = 7
-MAZE_HEIGHT = 4
-MAZE_WIDTH = 4
+
+EMPTY_CELL = 0
+WALL = 1
 AGENT = 2
 GOAL = 3
-BAYES_X = 10
 
+# BAYES_X = 10
 
-# FOR VAE
+# For vae
 Z_DIM = 8
-
 
 # For BayesGene
 DATA_BEFORE_UPDATE = 10

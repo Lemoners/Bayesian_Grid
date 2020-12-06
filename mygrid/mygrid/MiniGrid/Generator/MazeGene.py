@@ -15,13 +15,18 @@ def OPPOSITE(direction):
 
 
 class MazeGene(object):
-    """
-    Describe: Generate maze like grid
-    return: grid
-    return: pos (0,0)
-    return: goal_pos (GRID_WIDTH-1, GRID_HEIGHT-1) 
+    """ MazeGene
+
+    Generate maze-like grids through maze-generation algorithm (http://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking).
+    
     """
     def gene(self, grid_width=GRID_WIDTH, grid_height=GRID_HEIGHT):
+        """ Generate grids.
+
+        :returns: grid: numpy.matrix
+        :returns: start position for the agent: (0,0)
+        :returns: goal position: (GRID_WIDTH-1,GRID_HEIGHT-1)
+        """
         self.grid_width = grid_width
         self.grid_height = grid_height
         maze_width = (grid_width + 1) // 2
@@ -31,7 +36,7 @@ class MazeGene(object):
         sx = random.randint(0, maze_width - 1)
         sy = random.randint(0, maze_height - 1)
         self._carve_passage_from(sx, sy)
-        # print(self.gene_grid)
+
         self.grid = np.ones((self.grid_height, self.grid_width), dtype=np.uint8)
         for cx in range(maze_width):
             for cy in range(maze_height):
@@ -67,8 +72,6 @@ class MazeGene(object):
         self.gene_grid = np.zeros((maze_height, maze_width), dtype=np.uint8)
         self.pos = (0, 0)
         self.goal_pos = (self.grid_height-1, self.grid_width-1)
-        # self.goal_pos = (np.random.randint(GRID_WEIGHT),
-        #                 np.random.randint(GRID_HEIGHT))
 
     def update(self, data):
         pass
@@ -76,11 +79,14 @@ class MazeGene(object):
 
 
 class SimpleMazeGene(MazeGene):
-    """
-    Describe: gene maze only with wall and empty cell (used for VAE)
-    return: grid
+    """ SimpleMazeGene
+
+    Generate maze-like grids without agent and goal. (only with walls and empty cells, used for training VAE)
     """
     def gene(self):
+        """
+        :returns: grid: numpy.matrix
+        """
         grid, pos, goal_pos = super().gene()
         grid[pos[1], pos[0]] = 0
         grid[goal_pos[1], goal_pos[0]] = 0

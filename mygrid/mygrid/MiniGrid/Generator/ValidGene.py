@@ -4,6 +4,10 @@ from ..Utils.BFS import BFSAgent
 
 
 class ValidGene(object):
+    """ ValidGene
+
+    Generate solvable grids through random sampling.
+    """
     def __init__(self):
         super().__init__()
         self.bfs = BFSAgent()
@@ -28,10 +32,14 @@ class ValidGene(object):
         pass
 
 class SimpleValidGene(ValidGene):
-    """ Generate maze without agent and goal. (only with wall and empty cells, used for training VAE)
-    return: grid
+    """ SimpleValidGene
+    
+    Generate grids without agent and goal. (only with walls and empty cells, used for training VAE)
     """
     def gene(self):
+        """
+        :returns: grid: numpy.matrix
+        """
         grid, pos, goal_pos = super().gene()
         grid[pos[1], pos[0]] = 0
         grid[goal_pos[1], goal_pos[0]] = 0
