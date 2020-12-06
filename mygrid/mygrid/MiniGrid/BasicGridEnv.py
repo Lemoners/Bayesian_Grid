@@ -9,6 +9,10 @@ ACTION_SPACE_DIM = 5
 
 
 class BasicGridEnv(gym.Env):
+    """ BasicGridEnv
+
+    Environment to generate random grids. (solvable or unsolvable)
+    """
     def __init__(self, generator=BasicGene()):
         super(BasicGridEnv, self).__init__()
         self.generator = generator
@@ -71,7 +75,6 @@ class BasicGridEnv(gym.Env):
             done = True
 
         mgrid = self.grid.copy()
-        # mgrid = self.grid.reshape(self.h, self.w, 1)
 
         return mgrid, reward, done, info
 
@@ -85,5 +88,4 @@ class BasicGridEnv(gym.Env):
         self.step_count = 0
 
         mgrid = self.grid.copy()
-        # mgrid = self.grid.reshape(self.h, self.w, 1)
         return mgrid

@@ -1,6 +1,11 @@
 import gym
 
 class SparseRewardWrapper(gym.Wrapper):
+    """ SparseRewardWrapper
+
+    Wrapper to generate environment that only returns reward 1 when the goal is reached, 0 otherwise.
+
+    """
     def __init__(self, env):
         super(SparseRewardWrapper, self).__init__(env)
         self.env = env

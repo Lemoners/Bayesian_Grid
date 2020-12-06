@@ -9,11 +9,11 @@ class ValidGene(object):
         self.bfs = BFSAgent()
 
     def gene(self):
-        """
-        Describe: generate solvable maze
-        return: grid: numpy.matrix
-        return: pos: (0,0)
-        return: goal_pos: (GRID_WIDTH-1,GRID_HEIGHT-1)
+        """ Generate solvable grids through random sampling.
+
+        :returns: grid: numpy.matrix
+        :returns: start position for the agent: (0,0)
+        :returns: goal position: (GRID_WIDTH-1,GRID_HEIGHT-1)
         """
         while True:
             grid = np.random.randint(0, 2, (GRID_HEIGHT, GRID_WIDTH))
@@ -28,8 +28,7 @@ class ValidGene(object):
         pass
 
 class SimpleValidGene(ValidGene):
-    """
-    Describe: gene maze only with wall and empty cell (used for VAE)
+    """ Generate maze without agent and goal. (only with wall and empty cells, used for training VAE)
     return: grid
     """
     def gene(self):

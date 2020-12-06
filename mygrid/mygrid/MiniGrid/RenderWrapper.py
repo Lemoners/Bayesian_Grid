@@ -7,8 +7,9 @@ import numpy as np
 import time
 
 class RenderWrapper(tk.Frame):
-    """
-    Describe: a wrapper for render
+    """ RenderWrapper
+    
+    Wrapper to render the environment.
     """
     def __init__(self, env, width=GRID_WIDTH, height=GRID_HEIGHT, size=50):
         super(RenderWrapper, self).__init__()
@@ -47,8 +48,6 @@ class RenderWrapper(tk.Frame):
         obs, reward, done, info = self.env.step(action)
         ny, nx = find_obj(obs, AGENT)
         lx, ly = self.pos
-        # print("Move from ({},{}) to ({},{})".format(*self.pos, nx, ny))
-        # print((int)(nx-lx)*self.msize, (int)(ny-ly)*self.msize)
         self.pos = (nx, ny)
         self.canvas.move(self.agent, (int)(ny-ly)*self.msize, (int)(nx-lx)*self.msize)
         self.update()
