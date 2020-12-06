@@ -1,6 +1,5 @@
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from mygrid.MiniGrid.Generator.HyperPara import DATA_BEFORE_UPDATE, RANDOM_DATA_BEFORE_UPDATE, RANDOM_PARA_BEFORE_UPDATE, GRID_HEIGHT, GRID_WIDTH, Z_DIM
 from mygrid.MiniGrid.Utils.BFS import BFSAgent
 from mygrid.MiniGrid.BayesGridEnv import BayesGridEnv, RandomBayesGridEnv
