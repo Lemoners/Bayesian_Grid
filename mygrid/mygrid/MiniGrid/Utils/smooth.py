@@ -1,6 +1,6 @@
 import numpy as np
+
 def smooth(data, sm=1):
-    # print(data)
     if sm > 1 and sm < len(data):
         y = np.ones(sm)*1.0/sm
         y = np.convolve(y, data, "valid")

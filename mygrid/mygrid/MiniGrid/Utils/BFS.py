@@ -6,12 +6,12 @@ from .reward import point_distance
 
 class BFSAgent(object):
     def solve(self, maze):
-        """
-        param: maze: numpy.matrix
-        return: history: [numpy.matrix, action]
-        return: solvable: boolean
-        """
+        """ Solve given maze.
 
+        :args maze: maze to be solved.
+        :returns: solution for solving the maze: [numpy.matrix, action]
+        :returns: solvable: boolean
+        """
         # reset param
         self._reset(maze)
 
@@ -62,10 +62,11 @@ class BFSAgent(object):
         return history, solvable
 
     def solve_with_distance(self, maze):
-        """
-        param: maze: numpy.matrix
-        return: history: [numpy.matrix, action]
-        return: solvable: boolean
+        """ Solve given maze.
+
+        :args maze: maze to be solved.
+        :returns: distance to the goal at each step during solving the maze.
+        :returns: solvable: boolean
         """
 
         # reset param
@@ -133,48 +134,3 @@ class BFSAgent(object):
                                 for i in range(maze.shape[0])])
         self.pos = find_obj(maze, AGENT) 
         self.h, self.w = maze.shape
-    
-    def put_agent(self, maze, dis=None):
-        """
-        param: maze: numpy.matrix
-        return: history: [numpy.matrix, action]
-        return: solvable: boolean
-        """
-        dis = int(dis)
-        # reset param
-        self._reset(maze)
-
-        self.search_maze = maze.copy()
-        self.visited = maze.copy()
-        assert (len(np.where(self.visited == GOAL)[0]) > 0), "NO GOAL IN MAZE"
-        self.goal_y, self.goal_x = np.where(self.visited == GOAL)
-        assert (len(np.where(self.visited == AGENT)[0]) > 0), "NO AGENT IN MAZE"
-        self.visited[np.where(self.visited == GOAL)] = 0
-        self.visited[np.where(self.visited == AGENT)] = 0
-
-        distance = np.array([[-1 for i in range(maze.shape[1])]
-                                for i in range(maze.shape[0])])
-        search = []
-
-        # start BFS
-        self.ax, self.ay = self.goal_x, self.goal_y
-        search.append((self.ax,self.ay))
-        self.visited[self.ay,self.ax] = 1
-        self.distance[self.ay, self.ax] = 0
-
-        while(len(search) > 0):
-            x, y = search[0]
-            search = search[1:]
-
-            neibs = self._get_neighbour((x, y))
-            for n in neibs:
-                nx, ny = n
-                self.visited[ny, nx] = 1
-                distance[ny, nx] = distance[y, x] + 1
-                search.append(n)
-        
-        pos = np.where(distance==dis)
-        if len(pos[0]) == 0:
-            pos = np.where(distance==np.max(distance))
-
-        return (pos[1][0], pos[0][0])

@@ -1,6 +1,8 @@
 import numpy as np
 
 def direction2action(delta_x, delta_y):
+    """ Mapping direction to action.
+    """
     if (delta_x == 0):
         if (delta_y == 1):
             return 2
@@ -16,11 +18,15 @@ def direction2action(delta_x, delta_y):
 
 
 def action2direction(action):
+    """ Mapping action to direction.
+    """
     a2d = [(0, 0), (0, -1), (0, 1), (-1, 0), (1, 0)]
     return a2d[action]
 
 
 def find_obj(grid, obj):
+    """ Find object with its value. (return the first finded obj.)
+    """
     y, x = np.where(grid==obj)
     if (len(y) > 0):
         return (x[0], y[0])

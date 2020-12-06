@@ -122,18 +122,3 @@ def sample_vae(sample_size=batch_size):
         out = model.decode(z).view(-1, GRID_HEIGHT, GRID_WIDTH).cpu().round().numpy()
     return out
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
