@@ -66,10 +66,10 @@ class AlphaSet(object):
         _keys = [np.frombuffer(_key, dtype=self.dtype) for _key in self.keys]
         _old_keys = [np.frombuffer(_key, dtype=self.dtype) for _key in self.old_keys]
 
-        _values = [self.values[i] - self.old_values[self.old_keys.index(self.keys[i])] if (self.keys[i] in self.old_keys) else 0.0 for i in range(len(self.values))]
+        _values = [self.func(self.values[i], self.old_values[self.old_keys.index(self.keys[i])]) if (self.keys[i] in self.old_keys) else 0.0 for i in range(len(self.values))]
 
         # Uncomment this if you want to use relative improvement w.r.t. the performance compared to the score of the most similar parameter. (in Euclidean distance)
-        # _values = [self.values[i] - self.old_values[self.old_keys.index(self.keys[i])] if (self.keys[i] in self.old_keys) else self.values[i] - self.query_nn(np.frombuffer(self.keys[i], dtype=self.dtype), _old_keys) for i in range(len(self.values))]
+        _values = [self.func(self.values[i], self.old_values[self.old_keys.index(self.keys[i])]) if (self.keys[i] in self.old_keys) else self.func(self.values[i], self.query_nn(np.frombuffer(self.keys[i], dtype=self.dtype), _old_keys)) for i in range(len(self.values))]
         
         return (_keys.copy(), _values.copy())
 

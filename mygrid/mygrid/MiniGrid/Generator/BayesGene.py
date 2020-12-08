@@ -122,7 +122,7 @@ class BayesGene(object):
     def reset(self):
         """ Reset.
         """
-        self.memory = AlphaSet(func=lambda new, old: old - new, capacity=self.capacity, dtype=np.float64)
+        self.memory = AlphaSet(func=lambda new, old: new - old, capacity=self.capacity, dtype=np.float64)
 
         # Reset current parameter.
         self.z = np.zeros(Z_DIM)
