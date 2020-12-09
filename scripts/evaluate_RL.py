@@ -38,9 +38,9 @@ parser.add_argument('-s', '--sparse', default=False, action='store_true')
 if __name__ == "__main__":
     args = parser.parse_args()
     if not args.sparse:
-        model = A2C.load(model_dir + "/MazeGridEnv/model_200000.zip")
+        model = A2C.load(model_dir + "/MazeGridEnv/A2C.zip")
     else:
-        model = A2C.load(model_dir + "/SparseMazeGridEnv/model_200000.zip")
+        model = A2C.load(model_dir + "/SparseMazeGridEnv/A2C.zip")
 
     envs = {"MazeGridEnv": MazeGridEnv, "ValidGridEnv": ValidGridEnv, "HardGridEnv": HardGridEnv}
 

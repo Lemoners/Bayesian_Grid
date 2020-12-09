@@ -14,6 +14,7 @@ from mygrid.MiniGrid.Generator.HyperPara import GRID_HEIGHT, GRID_WIDTH
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--sparse', default=False, action='store_true')
+parser.add_argument('-t', '--time-steps', default=20000, type=int)
 
 model_save = os.path.dirname(os.path.abspath(__file__)) + "/data/model/RL/A2C"
 if not os.path.exists(model_save):
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     # Create the vectorized environment
     env = SubprocVecEnv([make_env(i, sparse=args.sparse) for i in range(num_cpu)])
 
-    time_steps = 200000
+    time_steps = args.time_steps
     model = A2C('MlpPolicy', env, verbose=1)
     model.learn(total_timesteps=time_steps)
 
@@ -51,4 +52,4 @@ if __name__ == '__main__':
     if not os.path.exists(model_save):
         os.makedirs(model_save)
 
-    model.save(model_save + "/model_{}".format(time_steps))
+    model.save(model_save + "/A2C")

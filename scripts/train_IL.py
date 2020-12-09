@@ -36,17 +36,17 @@ if not os.path.exists(para_save):
 parser = argparse.ArgumentParser(description="Training IL Agent")
 parser.add_argument('-e', '--envs', nargs='+', help='Environment for training.', default=\
     ['RandomBayesGridEnv', 'BayesGridEnv', 'BasicGridEnv', 'ValidGridEnv', 'MazeGridEnv'])
-parser.add_argument('--num-epochs', type=int, default=1000)
+parser.add_argument('--num-epoches', type=int, default=1000)
 parser.add_argument('--batch-size', type=int, default=64)
 parser.add_argument('--learning-rate', type=float, default=1e-3)
 parser.add_argument('--demo-epoch', type=int, default=10)
 parser.add_argument('--evaluate-epoch', type=int, default=50)
 parser.add_argument('--pre-collect', type=int, default=5000)
-parser.add_argument('--save-interval', type=int, default=20)
+parser.add_argument('-s', '--save-interval', type=int, default=20)
 parser.add_argument('--random-sample-rate', type=int, default=10, help="Random sample rate is `random_sample_rate` percent.")
 parser.add_argument('-l', '--log', default="")
 
-def train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3, demo_epoch=20, pre_collect=5000, save_interval=50, log_interval=20):
+def train(env, env_str, num_epoches=1000, batch_size=64, learning_rate=1e-3, demo_epoch=20, pre_collect=5000, save_interval=50, log_interval=20):
     """ Training IL agents with pure Behavior Cloning.
 
     Used for training IL agents in:
@@ -76,7 +76,7 @@ def train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3, demo
             for h, a in history:
                 memory.push(torch.tensor(h), torch.tensor(a))
 
-    for epoch in range(num_epochs):        
+    for epoch in range(num_epoches):        
         data_loader = torch.utils.data.DataLoader(dataset=memory, batch_size=batch_size, shuffle=True)
         for i, (states, actions) in enumerate(data_loader):
             states = states.to(device)
@@ -89,7 +89,7 @@ def train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3, demo
         
         _, score, _, _, _ = evaluate(maze_env, model)
 
-        print ('\rEpoch [{}/{}], Loss: {:.4f}, Maze: {:.2f}, Score: {:.2f}'.format(epoch+1, num_epochs, loss.item(), solvable_maze / (solvable_maze + bad_maze), score), end="", flush=True)
+        print ('\rEpoch [{}/{}], Loss: {:.4f}, Maze: {:.2f}, Score: {:.2f}'.format(epoch+1, num_epoches, loss.item(), solvable_maze / (solvable_maze + bad_maze), score), end="", flush=True)
         
         if (epoch+1) % log_interval == 0:
             print("")
@@ -97,9 +97,10 @@ def train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3, demo
         if (epoch+1) % save_interval == 0:
             model_state_dicts[str(epoch+1)] = copy.deepcopy(model.state_dict())
             torch.save(model_state_dicts, model_save + "/" + env_str)
+        print("")
             
 
-def bayes_train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3, evaluate_epoch=150, demo_epoch=20, pre_collect=5000, save_interval=50, log_interval=20, random_sample_rate=10):
+def bayes_train(env, env_str, num_epoches=1000, batch_size=64, learning_rate=1e-3, evaluate_epoch=150, demo_epoch=20, pre_collect=5000, save_interval=50, log_interval=20, random_sample_rate=10):
     """ Training IL with Behavior Cloning while updating the environment parameters with Bayesian Optimization.
 
     Used for training IL agents in:
@@ -125,7 +126,7 @@ def bayes_train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3
     hard_maze_env = HardGridEnv()
     maze_env = MazeGridEnv()
 
-    for epoch in range(num_epochs):
+    for epoch in range(num_epoches):
         scores = []
         for _ in range(evaluate_epoch):
             is_random = False
@@ -166,7 +167,7 @@ def bayes_train(env, env_str, num_epochs=1000, batch_size=64, learning_rate=1e-3
         # evaluate
         after_score, after_solve, _history, _, _ = evaluate(maze_env, model)
 
-        print ('\rEpoch [{}/{}], Loss: {:.4f}, Maze: {:.2f}, Solve: {:.2f}, Memories: {}'.format(epoch+1, num_epochs, loss.item(), solvable_maze / (solvable_maze + bad_maze + 1), after_solve, len(memory)), end="", flush=True)
+        print ('\rEpoch [{}/{}], Loss: {:.4f}, Maze: {:.2f}, Solve: {:.2f}, Memories: {}'.format(epoch+1, num_epoches, loss.item(), solvable_maze / (solvable_maze + bad_maze + 1), after_solve, len(memory)), end="", flush=True)
         
         env.generator.update_gp()
 
@@ -241,6 +242,6 @@ if __name__ == "__main__":
         print("Training IL Agent in {}".format(args.envs[i]))
 
         if 'BayesGridEnv' == args.envs[i]:
-            bayes_train(env, env_str=args.envs[i]+args.log, num_epochs=args.num_epochs, batch_size=args.batch_size, learning_rate=args.learning_rate, evaluate_epoch=args.evaluate_epoch ,demo_epoch=args.demo_epoch, pre_collect=args.pre_collect, save_interval=args.save_interval, random_sample_rate=args.random_sample_rate)
+            bayes_train(env, env_str=args.envs[i]+args.log, num_epoches=args.num_epoches, batch_size=args.batch_size, learning_rate=args.learning_rate, evaluate_epoch=args.evaluate_epoch ,demo_epoch=args.demo_epoch, pre_collect=args.pre_collect, save_interval=args.save_interval, random_sample_rate=args.random_sample_rate)
         else:
-            train(env, env_str=args.envs[i], num_epochs=args.num_epochs, batch_size=args.batch_size, learning_rate=args.learning_rate, demo_epoch=args.demo_epoch, pre_collect=args.pre_collect, save_interval=args.save_interval)
+            train(env, env_str=args.envs[i], num_epoches=args.num_epoches, batch_size=args.batch_size, learning_rate=args.learning_rate, demo_epoch=args.demo_epoch, pre_collect=args.pre_collect, save_interval=args.save_interval)
